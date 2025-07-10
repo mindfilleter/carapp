@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.main-nav-button {
+    transition: all 0.3s ease;
+}
+.main-nav-button.active {
+    background-color: #57534e; /* stone-600 */
+    color: #fafaf9; /* stone-50 */
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+.dark .main-nav-button.active {
+     background-color: #d6d3d1; /* stone-300 */
+     color: #1c1917; /* stone-900 */
+}
+.checklist-item {
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+.checklist-item.completed {
+    background-color: #dcfce7; /* green-100 */
+    border-left-color: #22c55e; /* green-500 */
+    color: #1f2937; /* gray-800 */
+}
+.dark .checklist-item.completed {
+    background-color: #166534; /* green-800 */
+    border-left-color: #4ade80; /* green-400 */
+    color: #e5e7eb; /* gray-200 */
+}
+
+.checklist-item.completed .item-icon {
+    transform: scale(1);
+    color: #22c55e; /* green-500 */
+}
+.dark .checklist-item.completed .item-icon {
+    color: #4ade80; /* green-400 */
+}
+.item-icon {
+    transform: scale(0);
+    transition: transform 0.2s ease-in-out;
+}
+.content-section {
+    display: none;
+}
+.content-section.active {
+    display: block;
+}
+.sub-nav-button.active {
+    background-color: #e7e5e4; /* stone-200 */
+    color: #1c1917; /* stone-900 */
+}
+.dark .sub-nav-button.active {
+    background-color: #3f3f46; /* zinc-700 */
+    color: #f4f4f5; /* zinc-100 */
+}
+.sub-content-section {
+    display: none;
+}
+.sub-content-section.active {
+    display: block;
+}
+.emergency-item h3 {
+    border-bottom: 2px solid #ef4444; /* red-500 */
+    padding-bottom: 0.5rem;
+}
+#toast {
+    transition: opacity 0.5s, transform 0.5s;
+}
+.vehicle-selector-btn.active {
+    background-color: #6d28d9; /* violet-700 */
+    color: white;
+}
+.info-input:read-only, .info-select:disabled {
+    background-color: transparent;
+    border-color: transparent;
+    padding-left: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

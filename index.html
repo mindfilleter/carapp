@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Interactive Handbook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body class="bg-stone-100 dark:bg-stone-900 text-stone-800 dark:text-stone-200">
+
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-5xl">
+        <header class="text-center mb-4">
+            <h1 id="vehicle-title" class="text-3xl sm:text-4xl md:text-5xl font-bold text-stone-700 dark:text-stone-300"></h1>
+            <p class="text-md sm:text-lg text-stone-500 dark:text-stone-400">Interactive Vehicle Handbook</p>
+        </header>
+
+        <div id="vehicle-selector-container" class="flex justify-center mb-8">
+        </div>
+
+        <nav class="flex justify-center bg-stone-200 dark:bg-stone-800 rounded-lg p-1 sm:p-2 mb-8 shadow-inner">
+            <button data-target="info" class="main-nav-button w-1/5 py-2 px-2 sm:px-4 text-xs sm:text-base rounded-md font-semibold text-stone-600 dark:text-stone-300">Info</button>
+            <button data-target="checklists" class="main-nav-button active w-1/5 py-2 px-2 sm:px-4 text-xs sm:text-base rounded-md font-semibold text-stone-600 dark:text-stone-300">Checklists</button>
+            <button data-target="emergency" class="main-nav-button w-1/5 py-2 px-2 sm:px-4 text-xs sm:text-base rounded-md font-semibold text-stone-600 dark:text-stone-300">Emergency</button>
+            <button data-target="logs" class="main-nav-button w-1/5 py-2 px-2 sm:px-4 text-xs sm:text-base rounded-md font-semibold text-stone-600 dark:text-stone-300">Logs</button>
+            <button data-target="data" class="main-nav-button w-1/5 py-2 px-2 sm:px-4 text-xs sm:text-base rounded-md font-semibold text-stone-600 dark:text-stone-300">Data</button>
+        </nav>
+
+        <main>
+            <!-- Vehicle Info Section -->
+            <section id="info" class="content-section">
+                <div class="bg-white dark:bg-stone-800 rounded-lg shadow-md p-4 md:p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl sm:text-2xl font-semibold text-stone-700 dark:text-stone-300">Vehicle Information</h2>
+                        <div>
+                            <button id="edit-info-btn" class="text-sm font-medium bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">Edit</button>
+                            <button id="save-info-btn" class="hidden text-sm font-medium bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">Save</button>
+                        </div>
+                    </div>
+                    <div id="vehicle-info-form" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-stone-500 dark:text-stone-400">Make</label>
+                            <input type="text" id="info-make" name="make" class="info-input mt-1 block w-full rounded-md border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 shadow-sm" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-500 dark:text-stone-400">Model</label>
+                            <input type="text" id="info-model" name="model" class="info-input mt-1 block w-full rounded-md border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 shadow-sm" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-500 dark:text-stone-400">Year</label>
+                            <input type="number" id="info-year" name="year" class="info-input mt-1 block w-full rounded-md border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 shadow-sm" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-500 dark:text-stone-400">VIN</label>
+                            <input type="text" id="info-vin" name="vin" class="info-input mt-1 block w-full rounded-md border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 shadow-sm" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-500 dark:text-stone-400">License Plate</label>
+                            <input type="text" id="info-plate" name="plate" class="info-input mt-1 block w-full rounded-md border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 shadow-sm" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-stone-500 dark:text-stone-400">Issuing State</label>
+                            <input type="text" id="info-state" name="state" class="info-input mt-1 block w-full rounded-md border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 shadow-sm" readonly>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-medium text-stone-500 dark:text-stone-400">Tabs Expiration</label>
+                            <div class="flex items-center mt-1 space-x-2">
+                                <select id="info-expiryMonth" name="expiryMonth" class="info-select block w-full rounded-md border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 shadow-sm" disabled>
+                                    <option value="">Month</option>
+                                    <option value="0">January</option><option value="1">February</option><option value="2">March</option><option value="3">April</option><option value="4">May</option><option value="5">June</option><option value="6">July</option><option value="7">August</option><option value="8">September</option><option value="9">October</option><option value="10">November</option><option value="11">December</option>
+                                </select>
+                                <input type="number" id="info-expiryYear" name="expiryYear" placeholder="Year" class="info-input block w-full rounded-md border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 shadow-sm" readonly>
+                            </div>
+                            <p id="expiry-status" class="mt-2 text-sm font-medium"></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Daily Checklists Section -->
+            <section id="checklists" class="content-section active">
+                <p id="checklist-intro" class="mb-6 text-stone-600 dark:text-stone-400 text-center px-2"></p>
+                <div class="sub-nav-container bg-white dark:bg-stone-800 rounded-lg shadow-md p-4 md:p-6">
+                    <div id="checklist-tabs" class="flex border-b border-stone-200 dark:border-stone-700 mb-4">
+                        </div>
+
+                    <div id="checklist-content">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Emergency Section -->
+            <section id="emergency" class="content-section">
+                <p class="mb-6 text-stone-600 dark:text-stone-400 text-center px-2">This section provides quick-reference guides for handling common on-road warnings and procedures. In an emergency, stay calm and prioritize your safety.</p>
+                 <div id="emergency-content" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 </div>
+            </section>
+
+            <!-- Logs Section -->
+            <section id="logs" class="content-section">
+                <p class="mb-6 text-stone-600 dark:text-stone-400 text-center px-2">Keeping accurate records is key to maintaining your vehicle. Use these forms to log your drives, refueling stops, and any maintenance performed.</p>
+                <div class="sub-nav-container bg-white dark:bg-stone-800 rounded-lg shadow-md p-4 md:p-6">
+                    <div class="flex border-b border-stone-200 dark:border-stone-700 mb-4">
+                        <button data-subtarget="drive-log" class="sub-nav-button flex-1 p-3 text-sm sm:text-base font-medium text-stone-700 dark:text-stone-300 rounded-t-md active">Drive Log</button>
+                        <button data-subtarget="refuel-log" class="sub-nav-button flex-1 p-3 text-sm sm:text-base font-medium text-stone-700 dark:text-stone-300 rounded-t-md">Refueling</button>
+                        <button data-subtarget="maint-log" class="sub-nav-button flex-1 p-3 text-sm sm:text-base font-medium text-stone-700 dark:text-stone-300 rounded-t-md">Maintenance</button>
+                    </div>
+
+                    <div id="drive-log" class="sub-content-section active">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl sm:text-2xl font-semibold text-stone-700 dark:text-stone-300">Log a New Drive</h2>
+                            <button id="clear-drive-log" class="text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300">Clear Log</button>
+                        </div>
+                        <form id="drive-log-form" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                            <input type="date" name="date" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                            <div></div>
+                            <input type="time" name="start_time" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                            <input type="time" name="end_time" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                            <input type="text" name="start_location" placeholder="Start Location (Lat/Long)" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md">
+                            <input type="text" name="end_location" placeholder="End Location (Lat/Long)" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md">
+                            <input type="number" name="start_mileage" placeholder="Start Mileage" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                            <input type="number" name="end_mileage" placeholder="End Mileage" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                            <input type="text" name="start_fuel" placeholder="Start Fuel (x/16)" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                            <input type="text" name="end_fuel" placeholder="End Fuel (x/16)" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                            <textarea name="notes" placeholder="Observations / Notes..." class="sm:col-span-2 p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md h-24"></textarea>
+                            <button type="submit" class="sm:col-span-2 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-md hover:bg-blue-700 transition">Add/Update Drive Log</button>
+                        </form>
+                        <div id="drive-log-display" class="space-y-4"></div>
+                        <div id="drive-log-pagination" class="flex justify-between items-center mt-4"></div>
+                    </div>
+
+                     <div id="refuel-log" class="sub-content-section">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl sm:text-2xl font-semibold text-stone-700 dark:text-stone-300">Log a Refueling Stop</h2>
+                            <button id="clear-refuel-log" class="text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300">Clear Log</button>
+                        </div>
+                        <form id="refuel-log-form" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                            <input type="date" name="date" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                             <input type="number" name="mileage" placeholder="Mileage at Refuel" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                            <input type="text" name="station_name" placeholder="Gas Station Name" class="sm:col-span-2 p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md">
+                             <input type="number" step="0.01" name="gallons" placeholder="Gallons Purchased" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                             <input type="number" step="0.001" name="price_per_gallon" placeholder="Price Per Gallon" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                             <input type="number" step="0.01" name="total_cost" placeholder="Total Cost" class="sm:col-span-2 p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                            <button type="submit" class="sm:col-span-2 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-md hover:bg-blue-700 transition">Add/Update Refueling Log</button>
+                        </form>
+                        <div id="refuel-log-display" class="space-y-4"></div>
+                        <div id="refuel-log-pagination" class="flex justify-between items-center mt-4"></div>
+                    </div>
+
+                    <div id="maint-log" class="sub-content-section">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl sm:text-2xl font-semibold text-stone-700 dark:text-stone-300">Log Maintenance</h2>
+                            <button id="clear-maint-log" class="text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300">Clear Log</button>
+                        </div>
+                         <form id="maint-log-form" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                            <input type="date" name="date" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                             <input type="number" name="mileage" placeholder="Mileage at Service" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                             <input type="text" name="service" placeholder="Service Performed (e.g., Oil Change)" class="sm:col-span-2 p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                             <textarea name="notes" placeholder="Notes (Parts, location, etc.)..." class="sm:col-span-2 p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md h-24"></textarea>
+                            <button type="submit" class="sm:col-span-2 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-md hover:bg-blue-700 transition">Add/Update Maintenance Log</button>
+                        </form>
+                        <div id="maint-log-display" class="space-y-4"></div>
+                        <div id="maint-log-pagination" class="flex justify-between items-center mt-4"></div>
+                        <hr class="my-6 border-stone-200 dark:border-stone-700">
+                        <div id="maintenance-intervals-display"></div>
+                    </div>
+
+                </div>
+            </section>
+            
+            <!-- Data Section -->
+            <section id="data" class="content-section">
+                <div class="bg-white dark:bg-stone-800 rounded-lg shadow-md p-4 md:p-6 space-y-6">
+                    <div id="data-management-section">
+                        <h2 class="text-xl sm:text-2xl font-semibold text-stone-700 dark:text-stone-300 mb-2">Data Management</h2>
+                        <p class="text-sm text-stone-600 dark:text-stone-400">Manage your application data. You can print logs for the selected vehicle, or backup and restore all data for both vehicles.</p>
+                    </div>
+                    <div id="mpg-display" class="bg-stone-50 dark:bg-stone-900 p-4 rounded-lg border border-stone-200 dark:border-stone-700">
+                        <h3 class="font-bold text-stone-700 dark:text-stone-300">Estimated Fuel Efficiency</h3>
+                        <p id="mpg-value" class="text-2xl font-light text-green-600 dark:text-green-400">-- MPG</p>
+                        <p class="text-xs text-stone-500 dark:text-stone-400">Calculated from refueling logs. Requires at least two entries for an estimate.</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <button id="print-checklists-btn" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-md hover:bg-indigo-700 transition">Print Checklists</button>
+                        <button id="print-logs-btn" class="w-full bg-sky-600 text-white font-bold py-3 px-4 rounded-md hover:bg-sky-700 transition">Print Logs</button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <button id="backup-data-btn" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-md hover:bg-green-700 transition">Backup All Data</button>
+                        <div>
+                            <label for="restore-file-input" class="w-full text-center block bg-amber-600 text-white font-bold py-3 px-4 rounded-md hover:bg-amber-700 transition cursor-pointer">Restore from Backup</label>
+                            <input type="file" id="restore-file-input" accept=".json" class="hidden"/>
+                        </div>
+                    </div>
+                    <p class="text-xs text-center text-stone-500 dark:text-stone-400"><strong class="text-red-500">Restore Warning:</strong> This will overwrite all existing data.</p>
+                    <hr class="my-4 border-stone-200 dark:border-stone-700">
+                    <div id="vehicle-management-section">
+                        <h2 class="text-xl sm:text-2xl font-semibold text-stone-700 dark:text-stone-300 mb-2">Manage Vehicles</h2>
+                        <div id="vehicle-list" class="space-y-2 mb-4"></div>
+                        <button id="add-vehicle-btn" class="w-full bg-fuchsia-600 text-white font-bold py-3 px-4 rounded-md hover:bg-fuchsia-700 transition">Add New Vehicle</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-0 right-0 m-8 p-4 rounded-lg bg-green-600 text-white shadow-lg opacity-0 transform translate-y-4">
+        Log entry saved!
+    </div>
+
+    <!-- Modal for Editing Vehicle -->
+    <div id="vehicle-editor-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-stone-800 rounded-lg shadow-xl p-6 w-full max-w-2xl max-h-full overflow-y-auto">
+            <h2 id="vehicle-editor-title" class="text-2xl font-bold mb-4 text-stone-800 dark:text-stone-200">Edit Vehicle</h2>
+            <form id="vehicle-editor-form">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <input type="hidden" id="editor-vehicle-id">
+                    <div><label class="block text-sm">Name</label><input type="text" id="editor-name" class="mt-1 w-full p-2 border rounded-md dark:bg-stone-700 dark:border-stone-600" required></div>
+                    <div><label class="block text-sm">Make</label><input type="text" id="editor-make" class="mt-1 w-full p-2 border rounded-md dark:bg-stone-700 dark:border-stone-600"></div>
+                    <div><label class="block text-sm">Model</label><input type="text" id="editor-model" class="mt-1 w-full p-2 border rounded-md dark:bg-stone-700 dark:border-stone-600"></div>
+                    <div><label class="block text-sm">Year</label><input type="number" id="editor-year" class="mt-1 w-full p-2 border rounded-md dark:bg-stone-700 dark:border-stone-600"></div>
+                </div>
+                <hr class="my-6 border-stone-200 dark:border-stone-700">
+                <h3 class="text-xl font-semibold mb-2">Checklists</h3>
+                <div id="checklist-editor-container" class="space-y-4"></div>
+                <button type="button" id="add-checklist-tab-btn" class="mt-2 text-sm font-medium bg-blue-500 text-white py-1 px-3 rounded-md hover:bg-blue-600">+ Add Checklist Tab</button>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" id="cancel-vehicle-edit" class="py-2 px-4 bg-stone-200 dark:bg-stone-600 rounded-md">Cancel</button>
+                    <button type="submit" class="py-2 px-4 bg-green-600 text-white rounded-md">Save Vehicle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
