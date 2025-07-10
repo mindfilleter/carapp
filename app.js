@@ -67,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderAllLogs();
         calculateAndDisplayMPG();
+        calculateAndDisplayCostPerMile();
     }
 
     function renderVehicleSelector() {
@@ -334,11 +335,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const renderMaintLogEntry = (log) => `
          <div class="bg-stone-50 dark:bg-stone-900 p-4 rounded-lg border border-stone-200 dark:border-stone-700">
-            <div class="flex justify-between items-start">
+            <div class="flex justify-between items-start flex-wrap gap-x-4">
                 <p class="font-bold text-stone-700 dark:text-stone-300">${log.service}</p>
-                <p class="text-sm text-stone-600 dark:text-stone-400">${log.mileage} mi</p>
+                ${log.cost ? `<p class="font-semibold text-stone-700 dark:text-stone-300">$${log.cost}</p>` : ''}
             </div>
-            <p class="text-sm text-stone-500 dark:text-stone-400">${log.date}</p>
+            <div class="flex justify-between items-start flex-wrap gap-x-4 text-sm text-stone-500 dark:text-stone-400">
+                <span>${log.date}</span>
+                <span>${log.mileage} mi</span>
+            </div>
             ${log.notes ? `<p class="mt-2 text-sm italic bg-stone-100 dark:bg-stone-800 p-2 rounded">"${log.notes}"</p>` : ''}
             <div class="text-right mt-2 space-x-2">
                 <button class="edit-btn text-xs text-blue-500" data-id="${log.id}" data-log-type="maintLog">Edit</button>
@@ -376,6 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem(logKey, JSON.stringify(logs));
                 renderLogs(logKey, displayId, renderFn, paginationId, pageState);
                 calculateAndDisplayMPG();
+                calculateAndDisplayCostPerMile();
                 form.reset();
             });
          }
@@ -389,6 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.removeItem(logKey);
                 renderLogs(logKey, displayId, renderFn, paginationId, pageState);
                 calculateAndDisplayMPG();
+                calculateAndDisplayCostPerMile();
                 showToast(`${logName} cleared.`);
             });
         }
@@ -409,6 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem(logKey, JSON.stringify(logs));
                     renderAllLogs();
                     calculateAndDisplayMPG();
+                    calculateAndDisplayCostPerMile();
                     showToast("Log entry deleted.");
                 }
             }
@@ -483,6 +490,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function calculateAndDisplayCostPerMile() {
+        const cpmValueEl = document.getElementById('cpm-value');
+        const refuelLogKey = `${currentVehicleId}_refuelLog`;
+        const maintLogKey = `${currentVehicleId}_maintLog`;
+
+        const refuelLogs = JSON.parse(localStorage.getItem(refuelLogKey)) || [];
+        const maintLogs = JSON.parse(localStorage.getItem(maintLogKey)) || [];
+
+        if (refuelLogs.length < 2) {
+            cpmValueEl.textContent = '$-- / mi';
+            return;
+        }
+
+        refuelLogs.sort((a, b) => parseInt(a.mileage) - parseInt(b.mileage));
+
+        const totalMiles = parseInt(refuelLogs[refuelLogs.length - 1].mileage) - parseInt(refuelLogs[0].mileage);
+        
+        if (totalMiles <= 0) {
+            cpmValueEl.textContent = '$-- / mi';
+            return;
+        }
+
+        const totalFuelCost = refuelLogs.reduce((sum, log) => sum + parseFloat(log.total_cost || 0), 0);
+        const totalMaintCost = maintLogs.reduce((sum, log) => sum + parseFloat(log.cost || 0), 0);
+
+        const totalCost = totalFuelCost + totalMaintCost;
+        const costPerMile = totalCost / totalMiles;
+
+        cpmValueEl.textContent = `$${costPerMile.toFixed(2)} / mi`;
+    }
+
     // Data Management Functions
     printChecklistsBtn.addEventListener('click', () => {
         const vehicleName = vehicles[currentVehicleId].name;
@@ -552,7 +590,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         printContent += '<h2>Maintenance Logs</h2>';
         maintLogs.forEach(log => {
-            printContent += `<div><p><strong>Date:</strong> ${log.date} | <strong>Mileage:</strong> ${log.mileage}</p><p><strong>Service:</strong> ${log.service}</p><p><strong>Notes:</strong> ${log.notes || 'N/A'}</p></div>`;
+            printContent += `<div><p><strong>Date:</strong> ${log.date} | <strong>Mileage:</strong> ${log.mileage}</p><p><strong>Service:</strong> ${log.service}</p><p><strong>Cost:</strong> $${log.cost || '0.00'}</p><p><strong>Notes:</strong> ${log.notes || 'N/A'}</p></div>`;
         });
 
         printContent += '</body></html>';
