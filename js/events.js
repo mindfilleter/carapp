@@ -36,38 +36,39 @@ export function attachSubNavListeners() {
 }
 
 function handleFormSubmit(formId, logKeyPrefix, logName, renderFn, displayId, paginationId, pageState) {
-    const form = document.getElementById(formId);
-    if(form) {
-       form.addEventListener('submit', (e) => {
-           e.preventDefault();
-           const logKey = `${state.currentVehicleId}_${logKeyPrefix}`;
-           const formData = new FormData(form);
-           const data = Object.fromEntries(formData.entries());
-           const logs = api.getLogs(logKey);
-           
-           if (state.editingState.id && state.editingState.logType === logKeyPrefix) {
-               const index = logs.findIndex(log => log.id === state.editingState.id);
-               if (index > -1) {
-                   data.id = state.editingState.id;
-                   logs[index] = data;
-               }
-               state.editingState.id = null;
-               state.editingState.logType = null;
-               ui.showToast(`${logName} entry updated.`);
-               form.querySelector('button[type="submit"]').textContent = `Add/Update ${logName}`;
-           } else {
-               data.id = Date.now();
-               logs.push(data);
-               ui.showToast(`${logName} entry saved.`);
-           }
-           
-           api.saveLogs(logKey, logs);
-           ui.renderLogs(logKey, displayId, renderFn, paginationId, pageState);
-           ui.calculateAndDisplayMPG();
-           ui.calculateAndDisplayCostPerMile();
-           form.reset();
-       });
-    }
+     const form = document.getElementById(formId);
+     if(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const logKey = `${state.currentVehicleId}_${logKeyPrefix}`;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            const logs = api.getLogs(logKey);
+            
+            if (state.editingState.id && state.editingState.logType === logKeyPrefix) {
+                const index = logs.findIndex(log => log.id === state.editingState.id);
+                if (index > -1) {
+                    data.id = state.editingState.id;
+                    logs[index] = data;
+                }
+                state.editingState.id = null;
+                state.editingState.logType = null;
+                ui.showToast(`${logName} entry updated.`);
+                form.querySelector('button[type="submit"]').textContent = `Add/Update ${logName}`;
+            } else {
+                data.id = Date.now();
+                logs.push(data);
+                ui.showToast(`${logName} entry saved.`);
+            }
+            
+            api.saveLogs(logKey, logs);
+            ui.renderLogs(logKey, displayId, renderFn, paginationId, pageState);
+            ui.calculateAndDisplayMPG();
+            ui.calculateAndDisplayCostPerMile();
+            form.reset();
+            ui.setDefaultDates();
+        });
+     }
 };
 
 function handleClearLog(buttonId, logKeyPrefix, logName, displayId, renderFn, paginationId, pageState) {

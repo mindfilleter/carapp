@@ -13,6 +13,13 @@ export function showToast(message) {
     }, 3000);
 }
 
+export function setDefaultDates() {
+    const today = new Date().toISOString().split('T')[0];
+    DOM.logForms.driveLog.elements['date'].value = today;
+    DOM.logForms.refuelLog.elements['date'].value = today;
+    DOM.logForms.maintLog.elements['date'].value = today;
+}
+
 export function renderLogs(logKey, displayId, renderFn, paginationId, pageState) {
     const displayElement = document.getElementById(displayId);
     const paginationElement = document.getElementById(paginationId);
@@ -210,7 +217,7 @@ export function calculateAndDisplayCostPerMile() {
     const totalMaintCost = maintLogs.reduce((sum, log) => sum + parseFloat(log.cost || 0), 0);
 
     const totalCost = totalFuelCost + totalMaintCost;
-    const costPerMile = totalCost / totalCost;
+    const costPerMile = totalCost / totalMiles;
 
     cpmValueEl.textContent = `$${costPerMile.toFixed(2)} / mi`;
 }
