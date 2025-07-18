@@ -41,6 +41,7 @@ function initialize() {
     const initialVehicleId = Object.keys(state.vehicles)[0];
     
     ui.renderVehicleSelector();
+    ui.renderVehicleManagementList();
     
     // Pass the necessary controller functions to the event setup module
     setupAllEventListeners({

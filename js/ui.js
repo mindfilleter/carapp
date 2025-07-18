@@ -252,3 +252,83 @@ export function calculateAndDisplayCostPerMile() {
 
     cpmValueEl.textContent = `$${costPerMile.toFixed(2)} / mi`;
 }
+
+export function renderVehicleManagementList() {
+    DOM.vehicleListContainer.innerHTML = '';
+    Object.keys(state.vehicles).forEach(key => {
+        const vehicle = state.vehicles[key];
+        const div = document.createElement('div');
+        div.className = 'flex justify-between items-center bg-stone-50 dark:bg-stone-900 p-3 rounded-md';
+        div.innerHTML = `
+            <span class="font-medium">${vehicle.name}</span>
+            <div>
+                <button class="edit-vehicle-btn text-xs text-blue-500 mr-2" data-id="${key}">Edit</button>
+                <button class="delete-vehicle-btn text-xs text-red-500" data-id="${key}">Delete</button>
+            </div>
+        `;
+        DOM.vehicleListContainer.appendChild(div);
+    });
+}
+
+export function openVehicleEditor(vehicleId = null) {
+    const isNew = vehicleId === null;
+    const editorTitle = document.getElementById('vehicle-editor-title');
+    const editorIdField = document.getElementById('editor-vehicle-id');
+    const checklistEditor = document.getElementById('checklist-editor-container');
+    
+    editorTitle.textContent = isNew ? "Add New Vehicle" : "Edit Vehicle";
+    DOM.vehicleEditorForm.reset();
+    checklistEditor.innerHTML = '';
+
+    if (isNew) {
+        editorIdField.value = `vehicle_${Date.now()}`;
+    } else {
+        const vehicle = state.vehicles[vehicleId];
+        editorIdField.value = vehicleId;
+        document.getElementById('editor-name').value = vehicle.name;
+        document.getElementById('editor-make').value = vehicle.info.make;
+        document.getElementById('editor-model').value = vehicle.info.model;
+        document.getElementById('editor-year').value = vehicle.info.year;
+
+        if (vehicle.checklists && vehicle.checklists.tabs) {
+            vehicle.checklists.tabs.forEach(tab => {
+                addChecklistTabToEditor(tab.name, vehicle.checklists[tab.id].items);
+            });
+        }
+    }
+    
+    DOM.vehicleEditorModal.classList.remove('hidden');
+}
+
+export function addChecklistTabToEditor(tabName = '', items = []) {
+    const checklistEditor = document.getElementById('checklist-editor-container');
+    const tabDiv = document.createElement('div');
+    tabDiv.className = 'p-3 border rounded-md dark:border-stone-600 space-y-2';
+    tabDiv.innerHTML = `
+        <div class="flex justify-between items-center">
+            <input type="text" placeholder="Checklist Tab Name (e.g., Pre-Ride)" value="${tabName}" class="tab-name-input w-full p-1 border-b dark:bg-stone-700 dark:border-stone-500" required>
+            <button type="button" class="remove-tab-btn text-red-500 ml-2 font-bold">X</button>
+        </div>
+        <div class="checklist-items-editor space-y-1"></div>
+        <button type="button" class="add-item-btn text-xs bg-green-500 text-white py-1 px-2 rounded-md hover:bg-green-600">+ Add Item</button>
+    `;
+    checklistEditor.appendChild(tabDiv);
+
+    const itemsContainer = tabDiv.querySelector('.checklist-items-editor');
+    items.forEach(item => addChecklistItemToEditor(itemsContainer, item.title, item.description));
+    
+    tabDiv.querySelector('.add-item-btn').addEventListener('click', () => addChecklistItemToEditor(itemsContainer));
+    tabDiv.querySelector('.remove-tab-btn').addEventListener('click', () => tabDiv.remove());
+}
+
+export function addChecklistItemToEditor(container, title = '', description = '') {
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'flex items-center space-x-2';
+    itemDiv.innerHTML = `
+        <input type="text" placeholder="Item Title" value="${title}" class="item-title-input w-1/3 p-1 border rounded-md dark:bg-stone-600 dark:border-stone-500" required>
+        <input type="text" placeholder="Item Description" value="${description}" class="item-description-input w-2/3 p-1 border rounded-md dark:bg-stone-600 dark:border-stone-500">
+        <button type="button" class="remove-item-btn text-red-500 font-bold">X</button>
+    `;
+    container.appendChild(itemDiv);
+    itemDiv.querySelector('.remove-item-btn').addEventListener('click', () => itemDiv.remove());
+}

@@ -143,6 +143,183 @@ function setupLogEventListeners() {
     });
 }
 
+function setupDataManagementEventListeners() {
+    DOM.printChecklistsBtn.addEventListener('click', () => {
+        const vehicleName = state.vehicles[state.currentVehicleId].name;
+        const checklists = state.vehicles[state.currentVehicleId].checklists;
+        let printContent = `
+            <html>
+                <head><title>Checklists for ${vehicleName}</title>
+                <style>
+                    body { font-family: sans-serif; margin: 2em; }
+                    h1, h2 { border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+                    ul { list-style-type: none; padding-left: 0; }
+                    li { margin-bottom: 10px; }
+                    .checklist { page-break-after: always; }
+                    .checklist:last-child { page-break-after: auto; }
+                </style>
+                </head>
+                <body>
+                    <h1>Checklists for ${vehicleName}</h1>
+        `;
+
+        checklists.tabs.forEach(tab => {
+            const checklist = checklists[tab.id];
+            printContent += `<div class="checklist"><h2>${checklist.title}</h2><ul>`;
+            checklist.items.forEach(item => {
+                printContent += `<li><strong>[ ] ${item.title}:</strong> ${item.description}</li>`;
+            });
+            printContent += `</ul></div>`;
+        });
+
+        printContent += '</body></html>';
+        
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        printWindow.print();
+    });
+
+    DOM.printLogsBtn.addEventListener('click', () => {
+        const vehicleName = state.vehicles[state.currentVehicleId].name;
+        const driveLogs = api.getLogs(`${state.currentVehicleId}_driveLog`);
+        const refuelLogs = api.getLogs(`${state.currentVehicleId}_refuelLog`);
+        const maintLogs = api.getLogs(`${state.currentVehicleId}_maintLog`);
+
+        let printContent = `
+            <html>
+                <head><title>Logs for ${vehicleName}</title>
+                <style>
+                    body { font-family: sans-serif; margin: 2em; }
+                    h1, h2 { border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+                    div { border: 1px solid #eee; padding: 10px; margin-bottom: 10px; page-break-inside: avoid; }
+                    p { margin: 0 0 5px 0; }
+                </style>
+                </head>
+                <body>
+                    <h1>Logs for ${vehicleName}</h1>
+        `;
+
+        printContent += '<h2>Drive Logs</h2>';
+        driveLogs.forEach(log => {
+            printContent += `<div><p><strong>Date:</strong> ${log.date} | <strong>Time:</strong> ${log.start_time} - ${log.end_time}</p><p><strong>Route:</strong> ${log.start_location || 'N/A'} to ${log.end_location || 'N/A'}</p><p><strong>Mileage:</strong> ${log.start_mileage} - ${log.end_mileage}</p><p><strong>Notes:</strong> ${log.notes || 'N/A'}</p></div>`;
+        });
+
+        printContent += '<h2>Refueling Logs</h2>';
+        refuelLogs.forEach(log => {
+            printContent += `<div><p><strong>Date:</strong> ${log.date} | <strong>Mileage:</strong> ${log.mileage}</p><p><strong>Station:</strong> ${log.station_name || 'N/A'}</p><p><strong>Details:</strong> ${log.gallons} gal @ $${log.price_per_gallon}/gal = $${log.total_cost}</p></div>`;
+        });
+
+        printContent += '<h2>Maintenance Logs</h2>';
+        maintLogs.forEach(log => {
+            printContent += `<div><p><strong>Date:</strong> ${log.date} | <strong>Mileage:</strong> ${log.mileage}</p><p><strong>Service:</strong> ${log.service}</p><p><strong>Cost:</strong> $${log.cost || '0.00'}</p><p><strong>Notes:</strong> ${log.notes || 'N/A'}</p></div>`;
+        });
+
+        printContent += '</body></html>';
+        
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        printWindow.print();
+    });
+
+    DOM.backupDataBtn.addEventListener('click', () => {
+        const backupData = api.getBackupData();
+        const dataStr = JSON.stringify(backupData, null, 2);
+        const dataBlob = new Blob([dataStr], {type: "application/json"});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.download = 'vehicle_handbook_backup.json';
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+        ui.showToast('Backup downloaded!');
+    });
+
+    DOM.restoreFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            try {
+                const backupData = JSON.parse(event.target.result);
+                api.restoreBackupData(backupData);
+                ui.showToast('Data restored successfully! Reloading...');
+                setTimeout(() => location.reload(), 2000);
+            } catch (err) {
+                ui.showToast('Error: Invalid backup file.');
+                console.error("Restore error:", err);
+            }
+        };
+        reader.readAsText(file);
+    });
+}
+
+function setupVehicleManagementEventListeners() {
+    DOM.vehicleListContainer.addEventListener('click', e => {
+        if (e.target.matches('.edit-vehicle-btn')) {
+            const vehicleId = e.target.dataset.id;
+            ui.openVehicleEditor(vehicleId);
+        }
+        if (e.target.matches('.delete-vehicle-btn')) {
+            const vehicleId = e.target.dataset.id;
+            if (confirm(`Are you sure you want to delete ${state.vehicles[vehicleId].name}? This will also delete all associated logs.`)) {
+                const keysToDelete = Object.keys(localStorage).filter(key => key.startsWith(vehicleId));
+                keysToDelete.forEach(key => localStorage.removeItem(key));
+                
+                delete state.vehicles[vehicleId];
+                api.saveVehicles(state.vehicles);
+
+                ui.showToast('Vehicle deleted. Reloading...');
+                setTimeout(() => location.reload(), 1500);
+            }
+        }
+    });
+
+    DOM.addVehicleBtn.addEventListener('click', () => ui.openVehicleEditor());
+    DOM.cancelVehicleEditBtn.addEventListener('click', () => DOM.vehicleEditorModal.classList.add('hidden'));
+
+    DOM.vehicleEditorForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const vehicleId = document.getElementById('editor-vehicle-id').value;
+        const newVehicleData = {
+            name: document.getElementById('editor-name').value,
+            info: {
+                make: document.getElementById('editor-make').value,
+                model: document.getElementById('editor-model').value,
+                year: document.getElementById('editor-year').value,
+                vin: '', plate: '', state: '', expiryMonth: '', expiryYear: ''
+            },
+            checklists: { tabs: [] },
+            emergencyContent: '',
+            maintenanceIntervals: ''
+        };
+
+        document.querySelectorAll('#checklist-editor-container > div').forEach((tabDiv, index) => {
+            const tabName = tabDiv.querySelector('.tab-name-input').value;
+            const tabId = `checklist_${index}_${Date.now()}`;
+            newVehicleData.checklists.tabs.push({ id: tabId, name: tabName });
+            newVehicleData.checklists[tabId] = { title: tabName, items: [] };
+
+            tabDiv.querySelectorAll('.checklist-items-editor > div').forEach(itemDiv => {
+                const title = itemDiv.querySelector('.item-title-input').value;
+                const description = itemDiv.querySelector('.item-description-input').value;
+                newVehicleData.checklists[tabId].items.push({ title, description });
+            });
+        });
+
+        state.vehicles[vehicleId] = newVehicleData;
+        api.saveVehicles(state.vehicles);
+        
+        DOM.vehicleEditorModal.classList.add('hidden');
+        ui.showToast('Vehicle saved! Reloading...');
+        setTimeout(() => location.reload(), 1500);
+    });
+
+    DOM.addChecklistTabBtn.addEventListener('click', () => ui.addChecklistTabToEditor());
+}
+
 export function setupAllEventListeners(controllers) {
     controllerFuncs = controllers;
 
@@ -166,6 +343,8 @@ export function setupAllEventListeners(controllers) {
     handleClearLog('clear-maint-log', 'maintLog', 'Maintenance Log', 'maint-log-display', templates.renderMaintLogEntry, 'maint-log-pagination', state.logPaging.maintLog);
 
     setupLogEventListeners();
+    setupDataManagementEventListeners();
+    setupVehicleManagementEventListeners();
 }
 
 export function setupVehicleSwitching(switchVehicle) {
