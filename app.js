@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderAllLogs();
         calculateAndDisplayMPG();
         calculateAndDisplayCostPerMile();
+        prepopulateMileageFields();
     }
 
     function renderVehicleSelector() {
@@ -233,6 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     clickedButton.classList.add('active');
                     container.querySelector(`#${subTargetId}`).classList.add('active');
+                    prepopulateMileageFields();
                 });
             });
         });
@@ -261,6 +263,27 @@ document.addEventListener('DOMContentLoaded', () => {
             toastElement.classList.add('opacity-0', 'translate-y-4');
         }, 3000);
     };
+
+    function getLastMileage(vehicleId) {
+        const logKey = `${vehicleId}_driveLog`;
+        const logs = JSON.parse(localStorage.getItem(logKey)) || [];
+        if (logs.length === 0) {
+            return '';
+        }
+        logs.sort((a, b) => parseInt(b.end_mileage) - parseInt(a.end_mileage));
+        return logs[0].end_mileage;
+    }
+
+    function prepopulateMileageFields() {
+        if (editingState.id) return;
+
+        const lastMileage = getLastMileage(currentVehicleId);
+        if (lastMileage) {
+            document.getElementById('drive-log-form').elements['start_mileage'].value = lastMileage;
+            document.getElementById('refuel-log-form').elements['mileage'].value = lastMileage;
+            document.getElementById('maint-log-form').elements['mileage'].value = lastMileage;
+        }
+    }
 
     const renderLogs = (logKey, displayId, renderFn, paginationId, pageState) => {
         const displayElement = document.getElementById(displayId);
@@ -382,6 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 calculateAndDisplayMPG();
                 calculateAndDisplayCostPerMile();
                 form.reset();
+                prepopulateMileageFields();
             });
          }
     };
