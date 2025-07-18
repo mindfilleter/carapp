@@ -52,3 +52,18 @@ export function restoreBackupData(backupData) {
         }
     }
 }
+
+export function getLastMileage(vehicleId) {
+    const logKey = `${vehicleId}_driveLog`;
+    const logs = getLogs(logKey);
+    if (logs.length === 0) {
+        return '';
+    }
+    // Sort by date descending, then by end_time descending to find the latest entry
+    logs.sort((a, b) => {
+        const dateA = new Date(`${a.date}T${a.end_time}`);
+        const dateB = new Date(`${b.date}T${b.end_time}`);
+        return dateB - dateA;
+    });
+    return logs[0].end_mileage;
+}

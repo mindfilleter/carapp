@@ -30,6 +30,17 @@ export function setDefaultDateTime() {
     DOM.logForms.driveLog.elements['end_time'].value = currentTime;
 }
 
+export function prepopulateMileageFields() {
+    if (state.editingState.id) return; // Don't prepopulate if editing
+
+    const lastMileage = api.getLastMileage(state.currentVehicleId);
+    if (lastMileage) {
+        DOM.logForms.driveLog.elements['start_mileage'].value = lastMileage;
+        DOM.logForms.refuelLog.elements['mileage'].value = lastMileage;
+        DOM.logForms.maintLog.elements['mileage'].value = lastMileage;
+    }
+}
+
 export function renderLogs(logKey, displayId, renderFn, paginationId, pageState) {
     const displayElement = document.getElementById(displayId);
     const paginationElement = document.getElementById(paginationId);
