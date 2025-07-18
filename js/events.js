@@ -1,8 +1,10 @@
 import { DOM } from './dom.js';
-import { state, ITEMS_PER_PAGE } from './state.js';
+import { state } from './state.js';
 import * as api from './api.js';
 import * as ui from './ui.js';
 import * as templates from './templates.js';
+
+let controllerFuncs = {};
 
 export function attachChecklistListeners() {
     document.querySelectorAll('.checklist-item').forEach(item => {
@@ -63,12 +65,12 @@ function handleFormSubmit(formId, logKeyPrefix, logName, renderFn, displayId, pa
             }
             
             api.saveLogs(logKey, logs);
-            ui.renderLogs(logKey, displayId, renderFn, paginationId, pageState);
-            ui.calculateAndDisplayMPG();
-            ui.calculateAndDisplayCostPerMile();
+            controllerFuncs.renderAllLogs();
+            controllerFuncs.calculateAndDisplayMPG();
+            controllerFuncs.calculateAndDisplayCostPerMile();
             form.reset();
             ui.setDefaultDateTime();
-            ui.prepopulateLogFields();
+            controllerFuncs.prepopulateLogFields();
         });
      }
 };
@@ -79,15 +81,73 @@ function handleClearLog(buttonId, logKeyPrefix, logName, displayId, renderFn, pa
         button.addEventListener('click', () => {
             const logKey = `${state.currentVehicleId}_${logKeyPrefix}`;
             api.clearLogs(logKey);
-            ui.renderLogs(logKey, displayId, renderFn, paginationId, pageState);
-            ui.calculateAndDisplayMPG();
-            ui.calculateAndDisplayCostPerMile();
+            controllerFuncs.renderAllLogs();
+            controllerFuncs.calculateAndDisplayMPG();
+            controllerFuncs.calculateAndDisplayCostPerMile();
             ui.showToast(`${logName} cleared.`);
         });
     }
 };
 
-export function setupAllEventListeners() {
+function setupLogEventListeners() {
+    DOM.contentSections.forEach(section => {
+        if (section.id === 'logs') {
+            section.addEventListener('click', e => {
+                const logType = e.target.dataset.logType;
+                if (!logType) return;
+                const logId = parseInt(e.target.dataset.id);
+
+                const logKey = `${state.currentVehicleId}_${logType}`;
+                let logs = api.getLogs(logKey);
+                
+                if (e.target.classList.contains('delete-btn')) {
+                    if (confirm('Are you sure you want to delete this entry?')) {
+                        logs = logs.filter(log => log.id !== logId);
+                        api.saveLogs(logKey, logs);
+                        controllerFuncs.renderAllLogs();
+                        controllerFuncs.calculateAndDisplayMPG();
+                        controllerFuncs.calculateAndDisplayCostPerMile();
+                        ui.showToast("Log entry deleted.");
+                    }
+                }
+
+                if (e.target.classList.contains('edit-btn')) {
+                    const logToEdit = logs.find(log => log.id === logId);
+                    if (logToEdit) {
+                        state.editingState = { logType, id: logId };
+                        const form = document.getElementById(`${logType.replace('Log', '')}-log-form`);
+                        if (form) {
+                            Object.keys(logToEdit).forEach(key => {
+                                if(form.elements[key]) {
+                                    form.elements[key].value = logToEdit[key];
+                                }
+                            });
+                            form.querySelector('button[type="submit"]').textContent = `Update ${logType.replace('Log', ' Log')}`;
+                            form.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                }
+            });
+
+            section.addEventListener('click', e => {
+                if (e.target.classList.contains('pagination-btn')) {
+                    const logKey = e.target.dataset.logKey;
+                    const logKeyPrefix = logKey.replace(`${state.currentVehicleId}_`, '');
+                    if (e.target.classList.contains('next-page-btn')) {
+                        state.logPaging[logKeyPrefix].currentPage++;
+                    } else if (e.target.classList.contains('prev-page-btn')) {
+                        state.logPaging[logKeyPrefix].currentPage--;
+                    }
+                    controllerFuncs.renderAllLogs();
+                }
+            });
+        }
+    });
+}
+
+export function setupAllEventListeners(controllers) {
+    controllerFuncs = controllers;
+
     DOM.mainNavButtons.forEach(button => {
         button.addEventListener('click', () => {
             const targetId = button.dataset.target;
@@ -106,4 +166,14 @@ export function setupAllEventListeners() {
     handleClearLog('clear-drive-log', 'driveLog', 'Drive Log', 'drive-log-display', templates.renderDriveLogEntry, 'drive-log-pagination', state.logPaging.driveLog);
     handleClearLog('clear-refuel-log', 'refuelLog', 'Refueling Log', 'refuel-log-display', templates.renderRefuelLogEntry, 'refuel-log-pagination', state.logPaging.refuelLog);
     handleClearLog('clear-maint-log', 'maintLog', 'Maintenance Log', 'maint-log-display', templates.renderMaintLogEntry, 'maint-log-pagination', state.logPaging.maintLog);
+
+    setupLogEventListeners();
+}
+
+export function setupVehicleSwitching(switchVehicle) {
+    DOM.vehicleSelectorContainer.addEventListener('click', (e) => {
+        if (e.target.matches('.vehicle-selector-btn')) {
+            switchVehicle(e.target.dataset.vehicle);
+        }
+    });
 }

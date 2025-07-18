@@ -14,7 +14,27 @@ export function saveVehicles(vehicles) {
 }
 
 export function getLogs(logKey) {
-    return JSON.parse(localStorage.getItem(logKey)) || [];
+    let logs = JSON.parse(localStorage.getItem(logKey)) || [];
+    
+    // One-time migration for old fuel format
+    if (logKey.endsWith('_driveLog') && logs.length > 0) {
+        let needsUpdate = false;
+        logs.forEach(log => {
+            if (typeof log.start_fuel === 'string' && log.start_fuel.includes('/')) {
+                log.start_fuel = log.start_fuel.split('/')[0];
+                needsUpdate = true;
+            }
+            if (typeof log.end_fuel === 'string' && log.end_fuel.includes('/')) {
+                log.end_fuel = log.end_fuel.split('/')[0];
+                needsUpdate = true;
+            }
+        });
+        if (needsUpdate) {
+            saveLogs(logKey, logs);
+        }
+    }
+    
+    return logs;
 }
 
 export function saveLogs(logKey, logs) {
@@ -66,6 +86,21 @@ export function getLastMileage(vehicleId) {
         return dateB - dateA;
     });
     return logs[0].end_mileage;
+}
+
+export function getLastEndLocation(vehicleId) {
+    const logKey = `${vehicleId}_driveLog`;
+    const logs = getLogs(logKey);
+    if (logs.length === 0) {
+        return '';
+    }
+    // Sort by date descending, then by end_time descending to find the latest entry
+    logs.sort((a, b) => {
+        const dateA = new Date(`${a.date}T${a.end_time || '00:00'}`);
+        const dateB = new Date(`${b.date}T${b.end_time || '00:00'}`);
+        return dateB - dateA;
+    });
+    return logs[0].end_location || '';
 }
 
 export function getLastEndFuel(vehicleId) {

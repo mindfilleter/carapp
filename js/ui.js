@@ -40,6 +40,11 @@ export function prepopulateLogFields() {
         DOM.logForms.maintLog.elements['mileage'].value = lastMileage;
     }
 
+    const lastEndLocation = api.getLastEndLocation(state.currentVehicleId);
+    if (lastEndLocation) {
+        DOM.logForms.driveLog.elements['start_location'].value = lastEndLocation;
+    }
+    
     const lastEndFuel = api.getLastEndFuel(state.currentVehicleId);
     if (lastEndFuel) {
         DOM.logForms.driveLog.elements['start_fuel'].value = lastEndFuel;
