@@ -4,6 +4,7 @@ import * as api from './api.js';
 import * as ui from './ui.js';
 import { setupAllEventListeners, setupVehicleSwitching } from './events.js';
 import * as templates from './templates.js';
+import * as dashboard from './dashboard.js';
 
 function renderAllLogs() {
     ui.renderLogs(`${state.currentVehicleId}_driveLog`, 'drive-log-display', templates.renderDriveLogEntry, 'drive-log-pagination', state.logPaging.driveLog);
@@ -32,6 +33,7 @@ function switchVehicle(vehicleId) {
     ui.calculateAndDisplayMPG();
     ui.calculateAndDisplayCostPerMile();
     ui.prepopulateLogFields();
+    dashboard.updateDashboard();
 }
 
 function initialize() {
@@ -49,6 +51,7 @@ function initialize() {
     });
     
     setupVehicleSwitching(switchVehicle);
+    dashboard.setupDashboardEventListeners();
     
     switchVehicle(initialVehicleId);
     ui.setDefaultDateTime();

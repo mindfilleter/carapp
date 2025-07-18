@@ -85,3 +85,30 @@ body {
     opacity: 0.5;
     cursor: not-allowed;
 }
+.time-window-selector .time-btn {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #57534e; /* stone-600 */
+    background-color: #f5f5f4; /* stone-100 */
+    transition: all 0.2s ease;
+}
+.dark .time-window-selector .time-btn {
+    color: #d6d3d1; /* stone-300 */
+    background-color: #3f3f46; /* zinc-700 */
+}
+.time-window-selector .time-btn.active {
+    color: #fafaf9; /* stone-50 */
+    background-color: #6d28d9; /* violet-700 */
+}
+.dark .time-window-selector .time-btn.active {
+    color: #1c1917; /* stone-900 */
+    background-color: #a78bfa; /* violet-400 */
+}
+.chart-container {
+    position: relative;
+    height: 40vh;
+    max-height: 400px;
+    width: 100%;
+}
