@@ -15,7 +15,7 @@ function initialize() {
     setupAllEventListeners();
     setupVehicleSwitching();
     ui.setDefaultDateTime();
-    ui.prepopulateMileageFields();
+    ui.prepopulateLogFields();
 }
 
 function renderAllLogs() {
@@ -44,7 +44,7 @@ function switchVehicle(vehicleId) {
     renderAllLogs();
     ui.calculateAndDisplayMPG();
     ui.calculateAndDisplayCostPerMile();
-    ui.prepopulateMileageFields();
+    ui.prepopulateLogFields();
 }
 
 function setupVehicleSwitching() {

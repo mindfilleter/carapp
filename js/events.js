@@ -30,7 +30,7 @@ export function attachSubNavListeners() {
                 
                 clickedButton.classList.add('active');
                 container.querySelector(`#${subTargetId}`).classList.add('active');
-                ui.prepopulateMileageFields();
+                ui.prepopulateLogFields();
             });
         });
     });
@@ -68,7 +68,7 @@ function handleFormSubmit(formId, logKeyPrefix, logName, renderFn, displayId, pa
             ui.calculateAndDisplayCostPerMile();
             form.reset();
             ui.setDefaultDateTime();
-            ui.prepopulateMileageFields();
+            ui.prepopulateLogFields();
         });
      }
 };

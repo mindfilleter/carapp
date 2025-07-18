@@ -61,9 +61,24 @@ export function getLastMileage(vehicleId) {
     }
     // Sort by date descending, then by end_time descending to find the latest entry
     logs.sort((a, b) => {
-        const dateA = new Date(`${a.date}T${a.end_time}`);
-        const dateB = new Date(`${b.date}T${b.end_time}`);
+        const dateA = new Date(`${a.date}T${a.end_time || '00:00'}`);
+        const dateB = new Date(`${b.date}T${b.end_time || '00:00'}`);
         return dateB - dateA;
     });
     return logs[0].end_mileage;
+}
+
+export function getLastEndLocation(vehicleId) {
+    const logKey = `${vehicleId}_driveLog`;
+    const logs = getLogs(logKey);
+    if (logs.length === 0) {
+        return '';
+    }
+    // Sort by date descending, then by end_time descending to find the latest entry
+    logs.sort((a, b) => {
+        const dateA = new Date(`${a.date}T${a.end_time || '00:00'}`);
+        const dateB = new Date(`${b.date}T${b.end_time || '00:00'}`);
+        return dateB - dateA;
+    });
+    return logs[0].end_location || '';
 }
