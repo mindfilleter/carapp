@@ -14,7 +14,7 @@ function initialize() {
     
     setupAllEventListeners();
     setupVehicleSwitching();
-    ui.setDefaultDates();
+    ui.setDefaultDateTime();
 }
 
 function renderAllLogs() {

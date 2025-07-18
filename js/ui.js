@@ -13,11 +13,21 @@ export function showToast(message) {
     }, 3000);
 }
 
-export function setDefaultDates() {
-    const today = new Date().toISOString().split('T')[0];
+export function setDefaultDateTime() {
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const currentTime = `${hours}:${minutes}`;
+
+    // Set dates for all log forms
     DOM.logForms.driveLog.elements['date'].value = today;
     DOM.logForms.refuelLog.elements['date'].value = today;
     DOM.logForms.maintLog.elements['date'].value = today;
+    
+    // Set times for the drive log form
+    DOM.logForms.driveLog.elements['start_time'].value = currentTime;
+    DOM.logForms.driveLog.elements['end_time'].value = currentTime;
 }
 
 export function renderLogs(logKey, displayId, renderFn, paginationId, pageState) {

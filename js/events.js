@@ -66,7 +66,7 @@ function handleFormSubmit(formId, logKeyPrefix, logName, renderFn, displayId, pa
             ui.calculateAndDisplayMPG();
             ui.calculateAndDisplayCostPerMile();
             form.reset();
-            ui.setDefaultDates();
+            ui.setDefaultDateTime();
         });
      }
 };
