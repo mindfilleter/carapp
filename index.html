@@ -120,8 +120,22 @@
                             <input type="text" name="end_location" placeholder="End Location (Lat/Long)" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md">
                             <input type="number" name="start_mileage" placeholder="Start Mileage" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
                             <input type="number" name="end_mileage" placeholder="End Mileage" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
-                            <input type="text" name="start_fuel" placeholder="Start Fuel (x/16)" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
-                            <input type="text" name="end_fuel" placeholder="End Fuel (x/16)" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                            <select name="start_fuel" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                                <option value="">Start Fuel</option>
+                                <option value="16">16/16 (Full)</option><option value="15">15/16</option><option value="14">14/16</option><option value="13">13/16</option>
+                                <option value="12">12/16 (3/4)</option><option value="11">11/16</option><option value="10">10/16</option><option value="9">9/16</option>
+                                <option value="8">8/16 (1/2)</option><option value="7">7/16</option><option value="6">6/16</option><option value="5">5/16</option>
+                                <option value="4">4/16 (1/4)</option><option value="3">3/16</option><option value="2">2/16</option><option value="1">1/16</option>
+                                <option value="0">0/16 (Empty)</option>
+                            </select>
+                            <select name="end_fuel" class="p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md" required>
+                                <option value="">End Fuel</option>
+                                <option value="16">16/16 (Full)</option><option value="15">15/16</option><option value="14">14/16</option><option value="13">13/16</option>
+                                <option value="12">12/16 (3/4)</option><option value="11">11/16</option><option value="10">10/16</option><option value="9">9/16</option>
+                                <option value="8">8/16 (1/2)</option><option value="7">7/16</option><option value="6">6/16</option><option value="5">5/16</option>
+                                <option value="4">4/16 (1/4)</option><option value="3">3/16</option><option value="2">2/16</option><option value="1">1/16</option>
+                                <option value="0">0/16 (Empty)</option>
+                            </select>
                             <textarea name="notes" placeholder="Observations / Notes..." class="sm:col-span-2 p-2 border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-700 rounded-md h-24"></textarea>
                             <button type="submit" class="sm:col-span-2 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-md hover:bg-blue-700 transition">Add/Update Drive Log</button>
                         </form>

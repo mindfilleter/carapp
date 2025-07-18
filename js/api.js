@@ -68,7 +68,7 @@ export function getLastMileage(vehicleId) {
     return logs[0].end_mileage;
 }
 
-export function getLastEndLocation(vehicleId) {
+export function getLastEndFuel(vehicleId) {
     const logKey = `${vehicleId}_driveLog`;
     const logs = getLogs(logKey);
     if (logs.length === 0) {
@@ -80,5 +80,5 @@ export function getLastEndLocation(vehicleId) {
         const dateB = new Date(`${b.date}T${b.end_time || '00:00'}`);
         return dateB - dateA;
     });
-    return logs[0].end_location || '';
+    return logs[0].end_fuel || '';
 }

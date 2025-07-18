@@ -7,7 +7,7 @@ export function renderDriveLogEntry(log) {
             </div>
             <div class="flex justify-between items-start flex-wrap gap-x-4 mt-1">
                 <p class="text-sm text-stone-600 dark:text-stone-400">Time: ${log.start_time} - ${log.end_time}</p>
-                <p class="text-sm text-stone-600 dark:text-stone-400">Fuel: ${log.start_fuel} → ${log.end_fuel}</p>
+                <p class="text-sm text-stone-600 dark:text-stone-400">Fuel: ${log.start_fuel}/16 → ${log.end_fuel}/16</p>
             </div>
              <p class="text-sm text-stone-600 dark:text-stone-400 mt-1">Route: ${log.start_location || 'N/A'} to ${log.end_location || 'N/A'}</p>
             ${log.notes ? `<p class="mt-2 text-sm italic bg-stone-100 dark:bg-stone-800 p-2 rounded">"${log.notes}"</p>` : ''}
